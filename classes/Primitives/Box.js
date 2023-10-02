@@ -27,3 +27,4 @@ class Box extends Primitive {
         return this.width * this.height * this.depth;
     }
 }
+PRIMITIVES.push("box");

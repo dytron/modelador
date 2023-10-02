@@ -59,7 +59,7 @@ function setup() {
     setupOctreeView();
 
     scene = [];
-    frameRate(60);
+    frameRate(144);
 }
 
 function setupViewSettings() {
@@ -102,7 +102,7 @@ function setupLoadModel() {
 function setupAddPrimitive() {
     let parent = 'add-primitive';
     selectAddPrimitive = createSelect();
-    ["box", "sphere", "cylinder", "cone"].forEach(m => selectAddPrimitive.option(m));
+    PRIMITIVES.forEach(m => selectAddPrimitive.option(m));
     selectAddPrimitive.changed(() => {
         primitiveName = selectAddPrimitive.value();
     });
@@ -119,6 +119,10 @@ function setupAddPrimitive() {
             primitive = new Cylinder(100, 300);
         } else if (primitiveName == "cone") {
             primitive = new Cone(100, 300);
+        } else if (primitiveName == "torus") {
+            primitive = new Torus(300, 100);
+        } else if (primitiveName == "pyramid") {
+            primitive = new Pyramid(100, 100, 4);
         }
         primitive.name = newName;
         primitive.process();
@@ -129,6 +133,17 @@ function setupAddPrimitive() {
     buttonAddPrimitive.parent(parent);
 }
 
+function selectModel(model) {
+    selectedModel = model;
+    labelVolume.html("");
+    if (selectedModel) {
+        checkboxVisible.elt.firstChild.firstChild.checked = selectedModel.visible;
+        if (selectedModel.volume) {
+            labelVolume.html(`Volume: ${selectedModel.volume}`);
+        }
+    }
+}
+
 function setupSceneView() {
     selectScene = createSelect();
     selectScene.attribute('size', 5);
@@ -137,14 +152,7 @@ function setupSceneView() {
     selectScene.option('none');
     selectScene.input(() => {
         let model = scene.find((e) => e.name == selectScene.value());
-        selectedModel = model;
-        labelVolume.html("");
-        if (selectedModel) {
-            checkboxVisible.elt.firstChild.firstChild.checked = selectedModel.visible;
-            if (selectedModel.volume) {
-                labelVolume.html(`Volume: ${selectedModel.volume}`);
-            }
-        }
+        selectModel(model);
         selectScene.adjust();
     });
     selectScene.adjust = () => {
@@ -171,7 +179,7 @@ function setupObjectView() {
         if (index == -1) return;
         selectScene.elt.remove(1 + index);
         scene.splice(index, 1);
-        selectedModel = null;
+        selectModel(null);
         selectScene.adjust();
     });
 }
@@ -192,12 +200,16 @@ function setupOctreeView() {
     buttonGenerateOctree.mousePressed(() => {
         if (!selectedModel) return;
         let newName = getAvailableName(`octree ${selectedModel.type}`);
-        let oct = new Octree(new Point(0, 0, 0), selectedModel.getMaxRadius(), sliderDepth.value());
+        let octreeCenter = selectedModel.center.mul(1);
+        let oct = new Octree(octreeCenter, selectedModel.getMaxRadius(), sliderDepth.value());
         oct.build(selectedModel);
         oct.process();
         oct.name = newName;
+        selectedModel.visible = false;
+        selectModel(oct);
         scene.push(oct);
         selectScene.option(newName);
+        selectScene.value(newName);
         selectScene.adjust();
     });
 }

@@ -24,3 +24,4 @@ class Cylinder extends Primitive {
         return Math.PI * (this.radius**2) * this.height;
     }
 }
+PRIMITIVES.push("cylinder");

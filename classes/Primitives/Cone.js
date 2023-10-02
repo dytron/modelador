@@ -10,7 +10,7 @@ class Cone extends Primitive {
     hasPoint(p) { 
         return p.y >= -this.height/2
             && p.y <= this.height/2
-            && p.x**2 + p.z**2 <= ((p.y - this.height/2) ** 2) * (this.radius ** 2) / (this.height ** 2); 
+            && p.x**2 + p.z**2 <= ((p.y - this.height/2) * this.radius / this.height) ** 2; 
     }
     getMaxRadius() {
         return Math.max(this.radius, this.height);
@@ -26,3 +26,4 @@ class Cone extends Primitive {
         return (1/3) * Math.PI * (this.radius**2) * this.height;
     }
 }
+PRIMITIVES.push("cone");

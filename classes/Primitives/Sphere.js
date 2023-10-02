@@ -23,3 +23,4 @@ class Sphere extends Primitive {
         return 4 * Math.PI * (this.radius ** 3 ) / 3;
     }
 }
+PRIMITIVES.push("sphere");

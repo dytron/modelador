@@ -93,3 +93,4 @@ class Primitive {
         return 0;
     }
 }
+var PRIMITIVES = [];
