@@ -1,7 +1,6 @@
 class Box extends Primitive {
     constructor (width, height, depth) {
         super();
-        this.center = new Point(0, 0, 0);
         this.width = width;
         this.height = height;
         this.depth = depth;

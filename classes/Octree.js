@@ -26,12 +26,16 @@ class Octree extends Primitive {
     }
     
     build(solid) {
-        this.state = solid.classify(this);   
-        if (this.depth > 1 && this.state === '(') {
-            this.subdivide();
-            for (let i = 0; i < 8; i++) {
-                this.children[i].build(solid);
+        if (this.depth >= 1) {
+            this.state = solid.classify(this);   
+            if (this.state === '(') { 
+                this.subdivide();
+                for (let i = 0; i < 8; i++) {
+                    this.children[i].build(solid);
+                }
             }
+        } else {
+            this.state = solid.classifyLeaf(this);
         }
     }
 
@@ -70,7 +74,8 @@ class Octree extends Primitive {
             new Point(x - halfDim, y - halfDim, z + halfDim),
             new Point(x + halfDim, y - halfDim, z + halfDim),
             new Point(x + halfDim, y + halfDim, z + halfDim),
-            new Point(x - halfDim, y + halfDim, z + halfDim)
+            new Point(x - halfDim, y + halfDim, z + halfDim),
+            new Point(x, y, z)
         ];
         return vertices;
     }
@@ -91,3 +96,4 @@ class Octree extends Primitive {
         return 0;
     }
 }
+Octree.minVertices = 5;

@@ -1,7 +1,9 @@
+// Modelo do carro: https://sketchfab.com/3d-models/low-poly-lamborghini-6f2a4555a33d4e6aadb142b5cca3f07b
+
 const SCENE_W = 700;
 const SCENE_H = 700;
 const AXIS_SIZE = 5000;
-const MODELS = ["hydrant", "drone"];
+const MODELS = ["bunny"];
 
 let mouseDrag = false;
 let mousePoint = new Point(0, 0, 0);
@@ -13,7 +15,7 @@ let zoomLevel = 1.0;
 let zoomIncrement = 0.1;
 let cameraSpeed = 2;
 
-let modelName = "hydrant";
+let modelName = "bunny";
 let primitiveName = "box";
 
 let selectedModel = null;
@@ -57,9 +59,32 @@ function setup() {
     setupSceneView();
     setupObjectView();
     setupOctreeView();
+    setupDropModel();
 
     scene = [];
     frameRate(144);
+}
+
+function setupDropModel() {
+    let mainCanvas = document.querySelector('canvas');
+    // Carregar arquivo de modelo
+    mainCanvas.addEventListener('drop', e => {
+        e.preventDefault();
+        const reader = new FileReader();
+        reader.onload = () => {
+          addModel("model", reader.result);
+          console.log(reader.result);
+        }
+        reader.readAsDataURL(e.dataTransfer.files[0]);
+    });
+    mainCanvas.addEventListener("dragover", e => {
+        e.preventDefault();
+    });
+    mainCanvas.addEventListener("dragleave", e => {
+        e.preventDefault();
+    });
+      
+
 }
 
 function setupViewSettings() {
@@ -76,6 +101,15 @@ function setupViewSettings() {
     checkboxAxis.parent('view-settings');
 }
 
+function addModel(name, path) {
+    let newName = getAvailableName(name);
+    let model = new ModelObject(path);
+    model.name = newName;
+    scene.push(model);
+    selectScene.option(newName);
+    selectScene.adjust();
+}
+
 function setupLoadModel() {
     selectLoadModel = createSelect();
     MODELS.forEach(m => selectLoadModel.option(m));
@@ -85,16 +119,7 @@ function setupLoadModel() {
     selectLoadModel.parent('load-model');
     buttonLoadModel = createButton("Load");
     buttonLoadModel.mousePressed(() => {
-        let newName = modelName;
-        let index = 1;
-        while (scene.find((e) => e.name == newName)) {
-            newName = `${modelName} ${++index}`
-        }
-        let model = new ModelObject(getModelPath());
-        model.name = newName;
-        scene.push(model);
-        selectScene.option(newName);
-        selectScene.adjust();
+        addModel(modelName, getModelPath());
     });
     buttonLoadModel.parent('load-model');
 }

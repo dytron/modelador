@@ -16,6 +16,9 @@ class Point {
     div(k) {
       return new Point(this.x / k, this.y / k, this.z / k);
     }
+    dot(v) {
+        return this.x * v.x + this.y * v.y + this.z * v.z;
+    }
     magnitude() {
       return Math.sqrt(this.x*this.x + this.y*this.y + this.z*this.z);
     }
@@ -36,6 +39,9 @@ class Point {
     }
     toArray() {
       return [this.x, this.y, this.z, 1];
+    }
+    toArray3D() {
+        return [this.x, this.y, this.z]
     }
   }
   

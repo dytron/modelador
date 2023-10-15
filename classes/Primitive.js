@@ -2,6 +2,7 @@ class Primitive {
     constructor() {
       this.vertices = [];
       this.points = [];
+      this.center = new Point(0, 0, 0);
       this.fill = 'yellow';
       this.strokeColor = 'black';
       this.strokeColorSelected = 'orange';
@@ -69,6 +70,17 @@ class Primitive {
         if (!config.wireframe) return 0;
         return (this.selected) ? this.strokeWeightSelected : this.strokeWeight;
     } 
+    classifyLeaf(octree) {
+        let count = 0;
+        const octreeVertices = octree.getVertices(); 
+        for (const vertex of octreeVertices) {
+            if (this.hasPoint(vertex)) {
+                count++;
+            }
+        }
+        if (count >= Octree.minVertices) return 'B';
+        return '(';
+    }
     classify(octree) {
         let inside = true;
         const octreeVertices = octree.getVertices(); 

@@ -1,7 +1,6 @@
 class Pyramid extends Primitive {
     constructor(baseSize, height, sides) {
         super();
-        this.center = new Point(0, 0, 0);
         this.baseSize = baseSize;
         this.height = height;
         this.sides = sides;

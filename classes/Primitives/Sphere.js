@@ -1,7 +1,6 @@
 class Sphere extends Primitive {
     constructor(radius) {
         super();
-        this.center = new Point(0, 0, 0);
         this.radius = radius;
         this.type = "sphere";
         this.process();

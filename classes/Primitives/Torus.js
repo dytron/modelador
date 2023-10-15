@@ -1,7 +1,6 @@
 class Torus extends Primitive {
     constructor(outerRadius, tubeRadius) {
         super();
-        this.center = new Point(0, 0, 0);
         this.outerRadius = outerRadius;
         this.tubeRadius = tubeRadius;
         this.type = "torus";

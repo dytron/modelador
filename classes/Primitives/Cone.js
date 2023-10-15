@@ -1,7 +1,6 @@
 class Cone extends Primitive {
     constructor(radius, height) {
         super();
-        this.center = new Point(0, 0, 0);
         this.radius = radius;
         this.height = height;
         this.type = "cone";
