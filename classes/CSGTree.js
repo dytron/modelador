@@ -40,18 +40,6 @@ class CSGTree extends Primitive {
     getDescription() {
         return "";
     }
-    static getCSGNode(type, params) {
-        const p = params;
-        switch (type) {
-            case "UNION": return new CSGUnion(p[0], p[1]);
-            case "INTERSECTION": return new CSGIntersection(p[0], p[1]);
-            case "DIFFERENCE": return new CSGDifference(p[0], p[1]);
-            case "TRANSLATION": return new CSGTranslation(p[3], p[0], p[1], p[2]);
-            case "ROTATION": return new CSGRotation(p[3], p[0], p[1], p[2]);
-            case "SPHERE": return new Sphere(p[0]);
-            case "CYLINDER": return new Sphere(p[0], p[1]);
-        }
-    }
     static parseCSGTree(input) {
         const parser = new CSGParser();
         return parser.parseExpression(input);
