@@ -5,6 +5,7 @@ class Pyramid extends Primitive {
         this.height = height;
         this.sides = sides;
         this.type = "pyramid";
+        this.description = `PYRAMID(${baseSize}|${height}|${sides})`;
         this.process();
     }
     hasPoint(p) { 

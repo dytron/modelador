@@ -3,6 +3,7 @@ class Sphere extends Primitive {
         super();
         this.radius = radius;
         this.type = "sphere";
+        this.description = `SPHERE(${radius})`;
         this.process();
     }
     hasPoint(p) {

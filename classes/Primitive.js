@@ -12,6 +12,7 @@ class Primitive {
       this.name = "";
       this.selected = false;
       this.visible = true;
+      this.description = "";
       this.volume = 0;
     }
     addVertex(x, y, z) {

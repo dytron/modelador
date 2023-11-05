@@ -4,6 +4,7 @@ class Torus extends Primitive {
         this.outerRadius = outerRadius;
         this.tubeRadius = tubeRadius;
         this.type = "torus";
+        this.description = `TORUS(${outerRadius}|${tubeRadius})`;
         this.process();
     }
     hasPoint(p) {
