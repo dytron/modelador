@@ -1,38 +1,50 @@
 class CSGParser {
+    constructor() {
+        this.primitiveClasses = {
+            "BOX": Box,
+            "SPHERE": Sphere,
+            "CYLINDER": Cylinder,
+            "CONE": Cone,
+            "TORUS": Torus,
+            "PYRAMID": Pyramid
+        };
+    }
+    
     tokenize(expression) {
-        return expression.split(/(\(|\)|\||\n)/).filter(token => token.trim() !== '');
+        return expression.replace(/\|/g, ',').split(/(\(|\)|,|\||\n)/).filter(token => token.trim() !== '');
+    }
+    
+    isPrimitive(type) {
+        return type in this.primitiveClasses;
     }
 
-    parseSphere(tokens) {
-        tokens.shift(); // (
-        const radius = parseFloat(tokens[0]);
-        tokens.shift(); // radius
-        tokens.shift(); // )
-        return new Sphere(radius);
-    }
-
-    parseCylinder(tokens) {        
-        tokens.shift(); // (
-        const radius = parseFloat(tokens[0]);
-        tokens.shift(); // radius
-        tokens.shift(); // |
-        const height = parseFloat(tokens[0]);
-        tokens.shift(); // height
-        tokens.shift(); // )
-        return new Cylinder(radius, height);
+    parsePrimitive(type, tokens) {
+        tokens.shift(); // Remove (
+        let params = [];
+        while (true) {
+            let token = tokens.shift();
+            if (token === ")") {
+                break;
+            }
+            if (token !== ",") {
+                params.push(parseFloat(token));
+            } 
+        }
+        const classConstructor = this.primitiveClasses[type];
+        return new classConstructor(...params);
     }
 
     parseTranslation(tokens) {
         tokens.shift(); // (
         const x = parseFloat(tokens[0]);
         tokens.shift(); // x
-        tokens.shift(); // |
+        tokens.shift(); // ,
         const y = parseFloat(tokens[0]);
         tokens.shift(); // y
-        tokens.shift(); // |
+        tokens.shift(); // ,
         const z = parseFloat(tokens[0]);
         tokens.shift(); // z
-        tokens.shift(); // |
+        tokens.shift(); // ,
         const shape = this.parseShape(tokens);
         tokens.shift(); // )
         return new CSGTranslation(shape, x, y, z);
@@ -40,13 +52,13 @@ class CSGParser {
 
     parseRotation(tokens) {
         tokens.shift(); // (
-        const x = parseFloat(tokens[0]);
+        const x = radians(parseFloat(tokens[0]));
         tokens.shift(); // x
-        tokens.shift(); // |
-        const y = parseFloat(tokens[0]);
+        tokens.shift(); // ,
+        const y = radians(parseFloat(tokens[0]));
         tokens.shift(); // y
-        tokens.shift(); // |
-        const z = parseFloat(tokens[0]);
+        tokens.shift(); // ,
+        const z = radians(parseFloat(tokens[0]));
         tokens.shift(); // z
         tokens.shift(); // |
         const shape = this.parseShape(tokens);
@@ -54,10 +66,52 @@ class CSGParser {
         return new CSGRotation(shape, x, y, z);
     }
 
+    parseColor(tokens) {
+        tokens.shift(); // (
+        const r = parseFloat(tokens[0]);
+        tokens.shift(); // r
+        tokens.shift(); // ,
+        const g = parseFloat(tokens[0]);
+        tokens.shift(); // g
+        tokens.shift(); // ,
+        const b = parseFloat(tokens[0]);
+        tokens.shift(); // b
+        tokens.shift(); // ,
+        const shape = this.parseShape(tokens);
+        tokens.shift(); // )
+        return new CSGColor(shape, r, g, b);
+    }
+
+    parseSpecular(tokens) {
+        tokens.shift(); // (
+        const r = parseFloat(tokens[0]);
+        tokens.shift(); // r
+        tokens.shift(); // ,
+        const g = parseFloat(tokens[0]);
+        tokens.shift(); // g
+        tokens.shift(); // ,
+        const b = parseFloat(tokens[0]);
+        tokens.shift(); // b
+        tokens.shift(); // ,
+        const shape = this.parseShape(tokens);
+        tokens.shift(); // )
+        return new CSGSpecular(shape, r, g, b);
+    }
+
+    parseShine(tokens) {
+        tokens.shift(); // (
+        const value = parseFloat(tokens[0]);
+        tokens.shift(); // value
+        tokens.shift(); // ,
+        const shape = this.parseShape(tokens);
+        tokens.shift(); // )
+        return new CSGShine(shape, value);
+    }
+
     parseUnion(tokens) {
         tokens.shift(); // (
         const shape1 = this.parseShape(tokens);
-        tokens.shift(); // |
+        tokens.shift(); // ,
         const shape2 = this.parseShape(tokens);
         tokens.shift(); // )
         if (shape1 && shape2) {
@@ -68,7 +122,7 @@ class CSGParser {
     parseIntersection(tokens) {
         tokens.shift(); // (
         const shape1 = this.parseShape(tokens);
-        tokens.shift(); // |
+        tokens.shift(); // ,
         const shape2 = this.parseShape(tokens);
         tokens.shift(); // )
         if (shape1 && shape2) {
@@ -79,7 +133,7 @@ class CSGParser {
     parseDifference(tokens) {
         tokens.shift(); // (
         const shape1 = this.parseShape(tokens);
-        tokens.shift(); // |
+        tokens.shift(); // ,
         const shape2 = this.parseShape(tokens);
         tokens.shift(); // )
         if (shape1 && shape2) {
@@ -90,10 +144,8 @@ class CSGParser {
     parseShape(tokens) {
         let type = tokens[0];
         tokens.shift();
-        if (type === "SPHERE") {
-            return this.parseSphere(tokens);
-        } else if (type === "CYLINDER") {
-            return this.parseCylinder(tokens);
+        if (this.isPrimitive(type)) {
+            return this.parsePrimitive(type, tokens);
         } else if (type === "UNION") {
             return this.parseUnion(tokens);
         } else if (type === "INTERSECTION") {
@@ -104,6 +156,12 @@ class CSGParser {
             return this.parseTranslation(tokens);
         } else if (type === "ROTATION") {
             return this.parseRotation(tokens);
+        } else if (type === "COLOR") {
+            return this.parseColor(tokens);
+        } else if (type === "SPECULAR") {
+            return this.parseSpecular(tokens);
+        } else if (type === "SHINE") {
+            return this.parseShine(tokens);
         }
         return null;
     }
@@ -114,6 +172,7 @@ class CSGParser {
         if (tokens.length === 0) {
             return shape;
         } else {
+            console.log(tokens);
             throw new Error("Invalid expression");
         }
     }

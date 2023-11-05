@@ -4,7 +4,7 @@ class Cone extends Primitive {
         this.radius = radius;
         this.height = height;
         this.type = "cone";
-        this.description = `CONE(${radius}|${height})`;
+        this.description = `CONE(${radius},${height})`;
         this.process();
     }
     hasPoint(p) { 

@@ -4,7 +4,7 @@ class Cylinder extends Primitive {
         this.radius = radius;
         this.height = height;
         this.type = "cylinder";
-        this.description = `CYLINDER(${radius}|${height})`;
+        this.description = `CYLINDER(${radius},${height})`;
         this.process();
     }
     hasPoint(p) {

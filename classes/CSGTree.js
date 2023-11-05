@@ -26,10 +26,14 @@ class CSGTree extends Primitive {
         // Só funciona corretamente com Union (e Fill ativado)
         if (this.left) {
             this.left.selected = this.selected;
+            if (!(this.left instanceof CSGColor))
+                this.left.fill = this.fill;
             this.left.draw();
         }
         if (this.right) {
             this.right.selected = this.selected;
+            if (!(this.right instanceof CSGColor))
+                this.right.fill = this.fill;
             this.right.draw();
         }
     }
@@ -64,7 +68,7 @@ class CSGTree extends Primitive {
                 node.children.forEach((child, index) => {
                     traverse(child, depth + 1)
                     if (index < node.children.length - 1) {
-                        result.push('  '.repeat(depth) + '|');
+                        result.push('  '.repeat(depth) + ',');
                       }
                 });
                 result.push('  '.repeat(depth) + ")");

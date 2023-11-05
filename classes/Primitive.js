@@ -3,7 +3,7 @@ class Primitive {
       this.vertices = [];
       this.points = [];
       this.center = new Point(0, 0, 0);
-      this.fill = 'yellow';
+      this.fill = 'white';
       this.strokeColor = 'black';
       this.strokeColorSelected = 'orange';
       this.strokeWeight = 1;
@@ -104,6 +104,9 @@ class Primitive {
     }
     calculateVolume() {
         return 0;
+    }
+    print() {
+      return this.description;
     }
 }
 var PRIMITIVES = [];

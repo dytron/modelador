@@ -5,7 +5,7 @@ class Box extends Primitive {
         this.height = height;
         this.depth = depth;
         this.type = "box";
-        this.description = `BOX(${width}|${height}|${depth})`;
+        this.description = `BOX(${width},${height},${depth})`;
         this.process();
     }
     hasPoint(p) {

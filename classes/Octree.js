@@ -4,7 +4,9 @@ class Octree extends Primitive {
         this.center = center;
         this.halfDimension = halfDimension;
         this.depth = depth;
+        this.type = "octree";
         this.state = 'B';
+        this.fill = 'red';
         this.children = [];
     }
   
@@ -56,8 +58,10 @@ class Octree extends Primitive {
     }
 
     draw() {
+        push();
         super.draw();
         this.drawOctree();
+        pop();
     }
 
     getVertices() {
