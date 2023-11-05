@@ -59,52 +59,12 @@ function setup() {
     setupSceneView();
     setupObjectView();
     setupOctreeView();
+    setupCSGView();
     setupDropModel();
     
     scene = [];
 
-    
-    // União de esfera com cilindro
-    /*let csg = new CSGUnion(
-        new Sphere(100),
-        new CSGTranslation(new Cylinder(100, 200), 0, -100, 0)
-    );*/
-    // Hidrante
-    let csg = 
-        new CSGUnion(
-            new CSGUnion(
-                new CSGUnion(
-                    new Sphere(50),
-                    new CSGTranslation(
-                        new Cylinder(50, 200), 
-                        0, -100, 0
-                    )
-                ),
-                new CSGTranslation(
-                    new CSGRotation(
-                        new Cylinder(25, 200), 
-                        PI/2, 0, 0
-                    ),
-                    0, -50, 0
-                )
-            ),
-            new CSGTranslation(
-                new CSGRotation(
-                    new Cylinder(25, 200), 
-                    0, 0, PI/2
-                ), 
-                0, -50, 0
-            )
-        );
-    /*
-    // Interseção de 2 esferas
-    let csg = new CSGIntersection(
-        new CSGTranslation(new Sphere(100), 0, -25, 0),
-        new CSGTranslation(new Sphere(100), 0, 25, 0)
-    );*/
-    scene = [csg];
-    selectModel(csg);
-    frameRate(144);
+    frameRate(60);
 }
 
 function setupDropModel() {
@@ -275,6 +235,23 @@ function setupOctreeView() {
         selectedModel.visible = false;
         selectModel(oct);
         scene.push(oct);
+        selectScene.option(newName);
+        selectScene.value(newName);
+        selectScene.adjust();
+    });
+}
+
+function setupCSGView() {
+    buttonGenerateCSG = createButton('Generate');
+    buttonGenerateCSG.parent('csg-generate');
+    buttonGenerateCSG.mousePressed(() => {
+        let newName = getAvailableName(`csg`);
+        let newCSG = CSGTree.parseCSGTree(document.getElementById("csg-input").value);
+        newCSG.name = newName;
+        if (selectedModel)
+            selectedModel.visible = false;
+        selectModel(newCSG);
+        scene.push(newCSG);
         selectScene.option(newName);
         selectScene.value(newName);
         selectScene.adjust();
