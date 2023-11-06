@@ -219,6 +219,7 @@ function setupObjectView() {
     checkboxVisible.changed(() => { 
         if (!selectedModel) return;
         selectedModel.visible = checkboxVisible.checked(); 
+        modifiedView = true;
     })
     checkboxVisible.parent('object-visible');
     
@@ -457,6 +458,7 @@ function keyPressed() {
     if (keyCode === ESCAPE) {
         selectedModel = null;
         selectScene.selected();
+        modifiedView = true;
     }
 }
 

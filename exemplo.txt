@@ -1,0 +1,21 @@
+DIFFERENCE(
+  INTERSECTION(
+    BOX(100,100,100)
+  ,
+    SPHERE(60)
+  )
+,
+  UNION(
+    ROTATION(90,0,0,
+      CYLINDER(30,100)
+    )
+  ,
+    UNION(
+      ROTATION(0,0,90,
+        CYLINDER(30,100)
+      )
+    ,
+      CYLINDER(30,100)
+    )
+  )
+)
