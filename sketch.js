@@ -52,6 +52,8 @@ function keyHolding(key) {
     return false;
 }
 
+let tetrahedron;
+
 function setup() {
     canvas = createCanvas(SCENE_W, SCENE_H, WEBGL);
     canvas.parent('canvas-container');
@@ -77,6 +79,37 @@ function setup() {
     
     scene = [];
 
+    tetrahedron = new Solid();
+
+    const v1 = new Vertex(tetrahedron, new Point(0, 0, 0));
+    const v2 = new Vertex(tetrahedron, new Point(1, 0, 0).mul(100));
+    const v3 = new Vertex(tetrahedron, new Point(0.5, 0, Math.sqrt(3) / 2).mul(100));
+    const v4 = new Vertex(tetrahedron, new Point(0.5, Math.sqrt(2 / 3), Math.sqrt(3) / 6).mul(100));
+
+    const e1 = new Edge(tetrahedron);
+    const e2 = new Edge(tetrahedron);
+    const e3 = new Edge(tetrahedron);
+    const e4 = new Edge(tetrahedron);
+    const e5 = new Edge(tetrahedron);
+    const e6 = new Edge(tetrahedron);
+
+    const f1 = new Face(tetrahedron);
+    const f2 = new Face(tetrahedron);
+    const f3 = new Face(tetrahedron);
+    const f4 = new Face(tetrahedron);
+
+    const l1 = new Loop(f1);
+    const l2 = new Loop(f2);
+    const l3 = new Loop(f3);
+    const l4 = new Loop(f4);
+
+    new HalfEdge(l1).add(e1, v1, 1).add(e2, v2, 1).add(e3, v3, 1);
+    new HalfEdge(l2).add(e1, v2, -1).add(e4, v4, 1).add(e5, v3, -1);
+    new HalfEdge(l3).add(e2, v2, -1).add(e5, v4, -1).add(e6, v1, 1);
+    new HalfEdge(l4).add(e3, v1, -1).add(e4, v3, 1).add(e6, v4, -1);
+
+    tetrahedron.print();
+//    scene.push(tetrahedron);
     frameRate(60);
 }
 
@@ -421,6 +454,8 @@ function draw() {
         pop();
     });
     
+    tetrahedron.draw();
+
     modifiedView = false;
 }
 
