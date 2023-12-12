@@ -37,9 +37,13 @@
           <div id="octree-generate" class="side"></div>
       </div>
       <div class="side-csg">
-        <p>Constructive Solid Geometry</p>
+        <p>CSG / BRep</p>
+        <select id="csg-brep">
+          <option value="csg">CSG</option>
+          <option value="brep">BRep</option>
+        </select>
           <div id="csg">
-            <div>Tree<div>
+            <div>Input<div>
               <textarea id="csg-input" cols="50" rows="50"></textarea>
           </div>
       </div>
@@ -50,6 +54,7 @@
     <script src="classes/Matrix.js"></script>
     <script src="classes/Primitive.js"></script>
     <script src="classes/ModelObject.js"></script>
+    <script src="classes/SolidObject.js"></script>
 
     <script src="classes/CSG/CSGParser.js"></script>
     <script src="classes/CSG/CSGTree.js"></script>

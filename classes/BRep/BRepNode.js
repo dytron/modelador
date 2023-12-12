@@ -13,4 +13,4 @@ class BRepNode {
         }
     }
 }
-Node.firstSolid = null;
+BRepNode.firstSolid = null;

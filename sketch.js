@@ -3,7 +3,7 @@
 const SCENE_W = 700;
 const SCENE_H = 700;
 const AXIS_SIZE = 5000;
-const MODELS = ["bunny"];
+const MODELS = ["hydrant", "sphere"];
 
 let cameraControlling = false;
 let mouseDrag = false;
@@ -18,7 +18,7 @@ let zoomLevel = 1.0;
 let zoomIncrement = 0.1;
 let cameraSpeed = 2;
 
-let modelName = "bunny";
+let modelName = "hydrant";
 let primitiveName = "box";
 
 let selectedModel = null;
@@ -79,36 +79,11 @@ function setup() {
     
     scene = [];
 
-    tetrahedron = new Solid();
+    
+    //new Solid();
+//    tetrahedron.print();
+   // console.log(e1);
 
-    const v1 = new Vertex(tetrahedron, new Point(0, 0, 0));
-    const v2 = new Vertex(tetrahedron, new Point(1, 0, 0).mul(100));
-    const v3 = new Vertex(tetrahedron, new Point(0.5, 0, Math.sqrt(3) / 2).mul(100));
-    const v4 = new Vertex(tetrahedron, new Point(0.5, Math.sqrt(2 / 3), Math.sqrt(3) / 6).mul(100));
-
-    const e1 = new Edge(tetrahedron);
-    const e2 = new Edge(tetrahedron);
-    const e3 = new Edge(tetrahedron);
-    const e4 = new Edge(tetrahedron);
-    const e5 = new Edge(tetrahedron);
-    const e6 = new Edge(tetrahedron);
-
-    const f1 = new Face(tetrahedron);
-    const f2 = new Face(tetrahedron);
-    const f3 = new Face(tetrahedron);
-    const f4 = new Face(tetrahedron);
-
-    const l1 = new Loop(f1);
-    const l2 = new Loop(f2);
-    const l3 = new Loop(f3);
-    const l4 = new Loop(f4);
-
-    new HalfEdge(l1).add(e1, v1, 1).add(e2, v2, 1).add(e3, v3, 1);
-    new HalfEdge(l2).add(e1, v2, -1).add(e4, v4, 1).add(e5, v3, -1);
-    new HalfEdge(l3).add(e2, v2, -1).add(e5, v4, -1).add(e6, v1, 1);
-    new HalfEdge(l4).add(e3, v1, -1).add(e4, v3, 1).add(e6, v4, -1);
-
-    tetrahedron.print();
 //    scene.push(tetrahedron);
     frameRate(60);
 }
@@ -150,7 +125,7 @@ function setupViewSettings() {
 }
 
 function addModel(name, path) {
-    let newName = getAvailableName(name);
+    let newName = getAvailableName("model " + name);
     let model = new ModelObject(path);
     model.name = newName;
     scene.push(model);
@@ -212,10 +187,14 @@ function setupAddPrimitive() {
 function selectModel(model) {
     selectedModel = model;
     labelVolume.html("");
+    labelArea.html("");
     if (selectedModel) {
         checkboxVisible.elt.firstChild.firstChild.checked = selectedModel.visible;
         if (selectedModel.volume) {
             labelVolume.html(`Volume: ${selectedModel.volume}`);
+        }
+        if (selectedModel.area) {
+            labelArea.html(`Area: ${selectedModel.area}`);
         }
     }
     modifiedView = true;
@@ -258,6 +237,9 @@ function setupObjectView() {
     
     labelVolume = createDiv('');
     labelVolume.parent('object-visible');
+
+    labelArea = createDiv('');
+    labelArea.parent('object-visible');
 
     buttonDeleteObject = createButton('Delete');
     buttonDeleteObject.parent('object');
@@ -353,23 +335,39 @@ function setupCSGView() {
     buttonGenerateCSG = createButton('Generate');
     buttonGenerateCSG.parent('csg-generate');
     buttonGenerateCSG.mousePressed(() => {
-        let newName = getAvailableName(`csg`);
-        let newCSG = CSGTree.parseCSGTree(csgInput.value);
-        newCSG.name = newName;
+        let newName, newModel;
+        if (window['csg-brep'].value === 'csg') {
+            newName = getAvailableName(`csg`);
+            newModel = CSGTree.parseCSGTree(csgInput.value);
+        } else {
+            newName = getAvailableName(`solid`);
+            newModel = new SolidObject(csgInput.value);
+        }
+        newModel.name = newName;
         if (selectedModel)
             selectedModel.visible = false;
-        selectModel(newCSG);
-        scene.push(newCSG);
+        selectModel(newModel);
+        scene.push(newModel);
         selectScene.option(newName);
         selectScene.value(newName);
         selectScene.adjust();
     });
-    buttonShowCSG = createButton('Show Selected CSG Output');
+    buttonShowCSG = createButton('Show Selected Output');
     buttonShowCSG.parent('csg-generate');
     buttonShowCSG.mousePressed(() => {
-        if (selectedModel && selectedModel.type != "model" && selectedModel.type != "octree") {
+        if (selectedModel && selectedModel.type != "octree") {
             csgInput.value = selectedModel.print();
         }
+    });
+    buttonBox = createButton('Box');
+    buttonBox.parent('csg-generate');
+    buttonBox.mousePressed(() => {
+        csgInput.value = SolidObject.generateBoxInput();
+    });
+    buttonSphere = createButton('Icosahedron');
+    buttonSphere.parent('csg-generate');
+    buttonSphere.mousePressed(() => {
+        csgInput.value = SolidObject.generateIcosphereInput();
     });
 }
 
@@ -454,7 +452,6 @@ function draw() {
         pop();
     });
     
-    tetrahedron.draw();
 
     modifiedView = false;
 }

@@ -23,8 +23,6 @@ class HalfEdge extends BRepNode {
             halfEdge = this;
         } else {
             halfEdge = new HalfEdge();
-            console.log("Creating new halfEdge:", halfEdge);
-            console.log("Connecting existing halfEdge to new halfEdge:", this.prev, "->", halfEdge);
             this.prev.next = halfEdge;
             halfEdge.prev = this.prev;
             this.prev = halfEdge;
@@ -34,13 +32,10 @@ class HalfEdge extends BRepNode {
         halfEdge.vertex = vtx;
         halfEdge.loop = this.loop;
         if (sign > 0) {
-            console.log("Setting edge.halfEdge1 to:", halfEdge);
             edge.halfEdge1 = halfEdge;
         } else {
-            console.log("Setting edge.halfEdge2 to:", halfEdge);
             edge.halfEdge2 = halfEdge;
         }
-        console.log("Resulting halfEdge:", halfEdge);
         return halfEdge;
     }
     del() {
